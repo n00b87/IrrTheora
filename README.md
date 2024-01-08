@@ -38,10 +38,10 @@ Must be called every frame to render the current video frame
 Frees the loaded video from memory
 
 **void pauseVideo()** \
-Pauses the currently playing video \
+Pauses the currently playing video
 
 **void resumeVideo()** \
-Resumes a video if it is paused \
+Resumes a video if it is paused
 
 **void setVideoPosition(Uint32 vpos)** \
 Jumps to vpos milliseconds in the current video
