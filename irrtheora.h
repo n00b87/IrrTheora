@@ -188,7 +188,6 @@ void init_irrTheora(irr::IrrlichtDevice* device)
 
 void loadVideo(std::string fname)
 {
-    //cout << "CRAP" << endl;
     decoder = THEORAPLAY_startDecodeFile(fname.c_str(), 30, THEORAPLAY_VIDFMT_RGBA);
     if(!decoder)
     {
@@ -222,14 +221,10 @@ void loadVideo(std::string fname)
 
     initfailed = quit = (!overlay);
     rc_video_end = false;
-
-
-    //fprintf(stderr, "b_debug 3.5\n");
 }
 
 int getVideoStats(std::string fname, double * v_len, double * v_fps, double * v_width, double * v_height)
 {
-    //cout << "CRAP" << endl;
     if(decoder)
         return 0;
     decoder = THEORAPLAY_startDecodeFile(fname.c_str(), 30, THEORAPLAY_VIDFMT_RGBA);
@@ -288,10 +283,6 @@ void getVideoSize(double * w, double * h)
 void setVideoDrawRect(int x, int y, int w, int h)
 {
     rc_video_dstrect = irr::core::rect(irr::core::vector2d<s32>(x,y), irr::core::dimension2d<u32>(w, h));
-    //rc_video_dstrect.x = x;
-    //rc_video_dstrect.y = y;
-    //rc_video_dstrect.w = w;
-    //rc_video_dstrect.h = h;
 }
 
 void getVideoDrawRect(double * x, double * y, double * w, double * h)
@@ -302,21 +293,11 @@ void getVideoDrawRect(double * x, double * y, double * w, double * h)
     *h = rc_video_dstrect.getHeight();
 }
 
-int videoLength()
-{
-    return rc_video_length;
-}
-
 void rc_cleanResume()
 {
-    //cout << "tat" << endl;
-    //if (overlay) SDL_DestroyTexture(overlay);
     if (t_video) THEORAPLAY_freeVideo(t_video);
     if (t_audio) THEORAPLAY_freeAudio(t_audio);
     if (decoder) THEORAPLAY_stopDecode(decoder);
-    //cout  << "bubble wrap" << endl;
-    //SDL_ClearQueuedAudio(0);
-    //while(SDL_GetQueuedAudioSize(0)>0){}
 
     rc_video_isPlaying = false;
     t_video = NULL;
@@ -345,7 +326,6 @@ void rc_cleanResume()
             }
         }
     }
-    //cout << "bankai" << endl;
 }
 
 void playVideo(int loops, ITexture * t_video_tgt)
@@ -354,7 +334,6 @@ void playVideo(int loops, ITexture * t_video_tgt)
         return;
     if(rc_video_reset)
     {
-        //cout << "RESET" << endl;
         decoder = THEORAPLAY_startDecodeFile(rc_video_file.c_str(), 30, THEORAPLAY_VIDFMT_RGBA);
         if(!decoder)
         {
@@ -365,7 +344,6 @@ void playVideo(int loops, ITexture * t_video_tgt)
             if(!t_audio) t_audio = THEORAPLAY_getAudio(decoder);
             if(!t_video) t_video = THEORAPLAY_getVideo(decoder);
             t_video_device->sleep(10);
-            //SDL_Delay(10);
         }
         rc_video_reset = false;
     }
@@ -410,32 +388,10 @@ void playVideo(int loops, ITexture * t_video_tgt)
 
 void stopVideo()
 {
-    //if(!rc_video_isPlaying)
-    //    return;
-
-    //cout << "baking soda" << endl;
-    //if (overlay) SDL_DestroyTexture(overlay);
     if (t_video) THEORAPLAY_freeVideo(t_video);
     if (t_audio) THEORAPLAY_freeAudio(t_audio);
     if (decoder) THEORAPLAY_stopDecode(decoder);
-    //cout  << "bubble wrap" << endl;
-    //SDL_ClearQueuedAudio(0);
-    //while(SDL_GetQueuedAudioSize(0)>0){}
-    //SDL_Delay(1500);
     t_video_device->sleep(1500);
-
-    /*
-    if(rc_audio_isOpen)
-    {
-        Mix_CloseAudio();
-        if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-        {
-            std::cout << "OpenAudio Error: " << Mix_GetError() << std::endl;
-        }
-        Mix_HookMusic(NULL, NULL);
-        rc_audio_isOpen = false;
-    }
-    */
 
     rc_video_isPlaying = false;
     rc_video_loops = 0;
@@ -446,18 +402,13 @@ void stopVideo()
     t_video = NULL;
     t_audio = NULL;
     decoder = NULL;
-    //cout << "mini" << endl;
 }
 
 static bool updateVideo()
 {
-    //cout << "video_start" << endl;
     if(!rc_video_isPlaying)
         return false;
-    //cout << "never print this" << endl;
-    //int q = !quit;
-    //int tp = THEORAPLAY_isDecoding(decoder);
-    //cout << "VARS = " << q << " & " << tp << endl;
+
     int isDecode = THEORAPLAY_isDecoding(decoder);
     if(isDecode)
         rc_video_end = false;
@@ -483,16 +434,11 @@ static bool updateVideo()
         if (!t_video)
             t_video = THEORAPLAY_getVideo(decoder);
 
-        //fprintf(stderr, "b_debug A\n");
-
         // Play video frames when it's time.
         if (t_video && (t_video->playms <= now))
         {
-            //fprintf(stderr, "b_debug B\n");
-            //printf("Play video frame (%u ms)!\n", video->playms);
             if ( framems && ((now - t_video->playms) >= framems) )
             {
-                //fprintf(stderr, "b_debug C\n");
                 // Skip frames to catch up, but keep track of the last one
                 //  in case we catch up to a series of dupe frames, which
                 //  means we'd have to draw that final frame and then wait for
@@ -506,17 +452,12 @@ static bool updateVideo()
                         break;
                 } // while
 
-                //fprintf(stderr, "b_debug D\n");
-
                 if (!t_video)
                     t_video = last;
             } // if
 
-            //fprintf(stderr, "b_debug B.1\n");
-            //int lock_tex = SDL_LockTexture(overlay, NULL, &overlay_pixels, &pitch);
-            overlay_pixels = overlay->lock(); //(irr::video::ETLM_WRITE_ONLY);
+            overlay_pixels = overlay->lock(irr::video::ETLM_WRITE_ONLY);
 
-            //fprintf(stderr, "b_debug B.1.2\n");
 
             if (!t_video)  // do nothing; we're far behind and out of options.
             {
@@ -529,7 +470,6 @@ static bool updateVideo()
             } // if
             else if (!overlay_pixels)
             {
-                //fprintf(stderr, "b_debug E\n");
                 static int warned = 0;
                 if (!warned)
                 {
@@ -539,8 +479,6 @@ static bool updateVideo()
             } // else if
             else
             {
-                //fprintf(stderr, "b_debug 4\n");
-                //SDL_Rect dstrec = { 0, 0, video->width, video->height };
                 const int w = t_video->width;
                 const int h = t_video->height;
                 Uint8 *dst;
@@ -572,10 +510,8 @@ static bool updateVideo()
         else  // no new video frame? Give up some CPU.
         {
             t_video_device->sleep(10);
-            //SDL_Delay(10);
         } // else
 
-        //fprintf(stderr, "b_debug F\n");
         while ((t_audio = THEORAPLAY_getAudio(decoder)) != NULL)
             videoPlayer_queue_audio(t_audio);
 
@@ -590,7 +526,6 @@ void deleteVideo()
     if(rc_video_isPlaying)
         stopVideo();
 
-    //std::cout << "cream soda" << std::endl;
     if (overlay) t_video_device->getVideoDriver()->removeTexture(overlay);
         overlay = NULL;
 
@@ -603,19 +538,6 @@ void deleteVideo()
     if (decoder) THEORAPLAY_stopDecode(decoder);
         decoder = NULL;
 
-    //std::cout  << "bubble wrap" << std::endl;
-    /*
-    if(rc_audio_isOpen)
-    {
-        Mix_CloseAudio();
-        if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-        {
-            std::cout << "OpenAudio Error: " << Mix_GetError() << std::endl;
-        }
-        rc_audio_isOpen = false;
-        Mix_HookMusic(NULL, NULL);
-    }
-    */
 
     rc_video_file = "";
     rc_video_isLoaded = false;
@@ -626,7 +548,6 @@ void deleteVideo()
     rc_video_width = 0;
     rc_video_height = 0;
     rc_video_dstrect = irr::core::rect(0,0,0,0);
-    //cout << "mini" << endl;
 }
 
 void pauseVideo()
@@ -638,7 +559,7 @@ void pauseVideo()
     if (t_audio) THEORAPLAY_freeAudio(t_audio);
     Mix_Pause(-1);
     t_video_device->sleep(1500);
-    //SDL_Delay(1500);
+
     if(rc_audio_isOpen)
     {
         Mix_CloseAudio();
@@ -658,7 +579,6 @@ void resumeVideo()
     if(!rc_video_isPaused)
         return;
 
-    //fprintf(stderr, "RESUME\n" );
 
     int dec_cycle = 0;
 
@@ -667,7 +587,7 @@ void resumeVideo()
         if(!t_audio) t_audio = THEORAPLAY_getAudio(decoder);
         if(!t_video) t_video = THEORAPLAY_getVideo(decoder);
         t_video_device->sleep(10);
-        //SDL_Delay(10);
+
         dec_cycle++;
         if(dec_cycle == 100)
             rc_cleanResume();
@@ -677,14 +597,11 @@ void resumeVideo()
             stopVideo();
             return;
         }
-        //fprintf(stderr,"working\n");
     }
 
-    //fprintf(stderr,"debug 1\n");
     if(!rc_audio_isOpen)
         Mix_CloseAudio();
     rc_video_isPlaying = true;
-    //fprintf(stderr,"debug 2\n");
 
     if(!rc_audio_isOpen)
     {
@@ -700,11 +617,9 @@ void resumeVideo()
         }
         rc_audio_isOpen = true;
     }
-    //fprintf(stderr,"debug 4\n");
 
     if(!rc_video_isLoaded)
     {
-        //cout << "GILLITEEN" <<endl;
         while (t_audio)
         {
             videoPlayer_queue_audio(t_audio);
@@ -715,8 +630,6 @@ void resumeVideo()
     baseticks = t_video_device->getTimer()->getTime() - rc_video_pauseTicks;
     rc_video_isLoaded = true;
     rc_video_isPaused = false;
-
-    //fprintf(stderr, "b_debug x\n");
 
     if (!quit)
         Mix_Pause(-1);

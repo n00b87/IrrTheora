@@ -35,7 +35,7 @@ int main()
     irrtheora::init_irrTheora(device);
 
     //Load a video
-    irrtheora::loadVideo("media/bunny.ogg");
+    irrtheora::loadVideo("bunny.ogg");
 
     //Set the video as playing for 0 loops and have it render to video_target
     irrtheora::playVideo(0, video_target);
