@@ -4,7 +4,6 @@ A library for playing theora (*.ogg, *.ogv) videos in Irrlicht. It requires SDL2
 
 To compile the example use these linker flags: -lIrrlicht -lSDL2main -lSDL2 -lSDL2_mixer -logg -lvorbis -lvorbisfile -ltheora -ltheoradec -pthread
 
-Note: You shouldn't need pthread on windows
 
 
 ## Reference ( Note: All functions are in the irrTheora namespace )
