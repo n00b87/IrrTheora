@@ -1,6 +1,7 @@
 #include <iostream>
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 #include "irrtheora.h"
+#include "rc_gfx.h"
 
 using namespace irr;
 using namespace core;
@@ -12,9 +13,18 @@ using namespace gui;
 
 int main()
 {
-    IrrlichtDevice *device =
-        createDevice( video::EDT_OPENGL, dimension2d<u32>(720, 480), 16,
-            false, false, false, 0);
+    createKeyMap();
+
+    rc_windowOpenEx("hell no", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 720, 480, false, false, false);
+
+    if(SDL_Init(SDL_INIT_AUDIO) < 0)
+    {
+        std::cout << "No audio" << std::endl;
+        for(int i = 0; i < SDL_GetNumAudioDrivers(); i++)
+        {
+            std::cout << "Driver [" << SDL_GetAudioDriver(i) << "]" << std::endl;
+        }
+    }
 
     if (!device)
         return 1;
@@ -40,7 +50,10 @@ int main()
     //Set the video as playing for 0 loops and have it render to video_target
     irrtheora::playVideo(0, video_target);
 
-    while(device->run())
+    irrtheora::setVideoVolume(24);
+
+
+    while(rc_update())
     {
         //updateVideo() will query the next frame of the video until the video is done playing the specified number of loops (0 will play the video once)
         irrtheora::updateVideo();

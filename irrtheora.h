@@ -2,7 +2,7 @@
 #define IRRTHEORA_H_INCLUDED
 
 #include <iostream>
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 #include <SDL2/SDL_mixer.h>
 #include "theoraplay.h"
 
@@ -56,6 +56,8 @@ int rc_video_fps = 0;
 int rc_video_currentLoop = 0;
 irr::IrrlichtDevice* t_video_device;
 static Uint32 baseticks = 0;
+
+int video_volume = 128;
 
 #ifdef RC_USE_TREMOR
 void videoPlayer_audio_callback(void *userdata, Uint8 *stream, int len)
@@ -116,6 +118,8 @@ void videoPlayer_audio_callback(void *userdata, Uint8 *stream, int len)
     //const Uint32 now = SDL_GetTicks() - baseticks;
     Sint16 *dst = (Sint16 *) stream;
 
+    float audio_vol = ( ((float)video_volume)/((float)MIX_MAX_VOLUME) ) * 32767.0f;
+
     while (audio_queue && (len > 0))
     {
         volatile AudioQueue *item = audio_queue;
@@ -137,7 +141,7 @@ void videoPlayer_audio_callback(void *userdata, Uint8 *stream, int len)
             else if (val > 1.0f)
                 *(dst++) = 32767;
             else
-                *(dst++) = (Sint16) (val * 32767.0f);
+                *(dst++) = (Sint16) (val * audio_vol);
         } // for
 
         item->offset += (cpy / channels);
@@ -667,6 +671,21 @@ bool videoExists()
     return false;
 }
 
+void setVideoVolume(int vol)
+{
+	if(vol < 0)
+		return;
+
+	if(vol > 128)
+		video_volume = 128;
+	else
+		video_volume = vol;
+}
+
+int getVideoVolume()
+{
+	return video_volume;
+}
 
 
 } // namespace irrtheora
