@@ -286,7 +286,7 @@ void getVideoSize(double * w, double * h)
 
 void setVideoDrawRect(int x, int y, int w, int h)
 {
-    rc_video_dstrect = irr::core::rect(irr::core::vector2d<s32>(x,y), irr::core::dimension2d<u32>(w, h));
+    rc_video_dstrect = irr::core::rect<s32>(irr::core::vector2d<s32>(x,y), irr::core::dimension2d<u32>(w, h));
 }
 
 void getVideoDrawRect(double * x, double * y, double * w, double * h)
@@ -551,7 +551,7 @@ void deleteVideo()
     rc_video_length = 0;
     rc_video_width = 0;
     rc_video_height = 0;
-    rc_video_dstrect = irr::core::rect(0,0,0,0);
+    rc_video_dstrect = irr::core::rect<s32>(0,0,0,0);
 }
 
 void pauseVideo()
